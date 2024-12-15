@@ -5,12 +5,9 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(200))
     done = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default="active")  # New field for task status
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'description': self.description,
-            'done': self.done
-        }
+    def __repr__(self):
+        return f'<Task {self.title} - {self.status}>'
+

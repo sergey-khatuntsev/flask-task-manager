@@ -23,11 +23,18 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Account created successfully!', 'success')
-        return redirect(url_for('auth.login'))
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password
+        )
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Account created successfully!', 'success')
+            return redirect(url_for('auth.login'))
+        except:
+            flash('An error occurred. Please try again.', 'danger')
     return render_template('auth/signup.html', form=form)
 
 @auth_bp.route('/logout')

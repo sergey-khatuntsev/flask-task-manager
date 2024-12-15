@@ -1,13 +1,82 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Your Tasks</h2>
-<a href="#">Create New Task</a>
-<ul>
-    {% for task in tasks %}
-    <li>
-        <strong>{{ task.title }}</strong> - {{ task.description }}
-        {% if task.done %} ✅ {% else %} ❌ {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    <h2 class="text-center">Your Tasks</h2>
+    
+    <!-- Form for Creating a Task -->
+    <div class="form-container mb-4">
+        <h4>Create a New Task</h4>
+        <form method="POST" action="{{ url_for('tasks.tasks_page') }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter task title">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Enter task description"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Create Task</button>
+        </form>
+    </div>
+
+    <!-- Active Task List -->
+    <div class="task-list">
+        <h4>Your Task List</h4>
+        {% if tasks %}
+            <ul class="list-group">
+                {% for task in tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ task.title }}</strong><br>
+                            <small>{{ task.description }}</small>
+                        </div>
+                        <div>
+                            <form method="POST" action="{{ url_for('tasks.update_task', task_id=task.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-success">
+                                    {% if task.done %}Mark as Undone{% else %}Mark as Done{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('tasks.delete_task', task_id=task.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">You have no tasks yet. Create one above!</p>
+        {% endif %}
+    </div>
+
+    <!-- Archived Task List -->
+    <div class="task-list mt-5">
+        <h4>Archived Tasks</h4>
+        {% if archived_tasks %}
+            <ul class="list-group">
+                {% for task in archived_tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ task.title }}</strong><br>
+                            <small>{{ task.description }}</small><br>
+                            <small>Status: {{ task.status }}</small>
+                        </div>
+                        <div>
+                            {% if task.status == "archived" %}
+                                <form method="POST" action="{{ url_for('tasks.reopen_task', task_id=task.id) }}" class="d-inline">
+                                    <button class="btn btn-sm btn-warning">Reopen</button>
+                                </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('tasks.full_delete_task', task_id=task.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-danger">Full Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No archived tasks.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
