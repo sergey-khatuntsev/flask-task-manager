@@ -19,6 +19,9 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    from app.api import api_bp
+    app.register_blueprint(api_bp)
+
     from .auth.routes import auth_bp
     from .tasks.routes import tasks_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
