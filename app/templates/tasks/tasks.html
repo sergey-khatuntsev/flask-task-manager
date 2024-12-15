@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Tasks</h2>
+<a href="#">Create New Task</a>
+<ul>
+    {% for task in tasks %}
+    <li>
+        <strong>{{ task.title }}</strong> - {{ task.description }}
+        {% if task.done %} ✅ {% else %} ❌ {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
